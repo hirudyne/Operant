@@ -6,11 +6,12 @@ namespace Operant.SaveFormat;
 /// and <c>skills.promotion_&lt;id&gt;</c> counter keys.
 /// </summary>
 /// <remarks>
-/// Derived from the IL2CPP dump's string-literal table: the only strings
-/// matching the per-skill counter format are the 15 listed below. Note that
-/// the <c>SkillType</c> enum in <c>ZAUM.FELD.C4.Dialogues.Model.Entities</c>
-/// uses older or dialogue-side names (e.g. "doppelgang" vs the save-side
-/// "awareness"); the names here are the ones the save format actually uses.
+/// 15 skills, three faculties of five. The list was cross-checked against
+/// real saves: every distinct <c>skills.&lt;id&gt;</c> counter across the
+/// available sample saves appears below, and nothing else does. The IL2CPP
+/// string-literal table contains additional plausible-looking strings (e.g.
+/// "shadowplay") that turn out to be dialogue/thought identifiers rather than
+/// skill ids, so we don't trust string-table matches alone.
 /// </remarks>
 public static class SkillMetadata
 {
@@ -29,7 +30,6 @@ public static class SkillMetadata
         "presence",
         "recall",
         "senses",
-        "shadowplay",
         "vigour",
         "wits",
     };
