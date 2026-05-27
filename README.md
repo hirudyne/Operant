@@ -7,20 +7,15 @@ Edits Sol, inventory item amounts and equipped state, and FELDState counters
 encryption, and per-chunk checksums were reverse-engineered from the IL2CPP
 binary; this editor handles the round-trip transparently.
 
-## Quick start
+## Build & run
 
-Prebuilt: download `OperantEditor.exe` from a release, double-click.
-
-From source:
+Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download).
 
 ```cmd
 git clone https://github.com/hirudyne/Operant.git
 cd Operant
-publish.cmd
-publish\OperantEditor.exe
+dotnet run --project src\Operant.Editor
 ```
-
-Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download).
 
 ## What it edits
 
@@ -47,7 +42,6 @@ src/
   Operant.SaveFormat/        Format library (read/write, AES, Hash128)
   Operant.SaveFormat.Tests/  xUnit tests with sample saves as test data
   Operant.Editor/            WPF GUI, MVVM, no third-party UI deps
-publish.cmd / publish.sh     Build a single-file self-contained .exe
 Operant.sln                  Solution file
 ```
 
