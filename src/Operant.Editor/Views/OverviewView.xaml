@@ -1,0 +1,78 @@
+<UserControl x:Class="Operant.Editor.Views.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="700">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Save metadata" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Save name"  Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="0" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding SaveName, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Save label" Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="1" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding SaveLabel, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Play time (s)" Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="2" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding PlayTime, UpdateSourceTrigger=LostFocus}"/>
+            </Grid>
+
+            <TextBlock Grid.Row="2" Text="Currency &amp; story time" FontSize="16" FontWeight="SemiBold" Margin="0,16,0,8"/>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Sol" Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="0" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding Sol, UpdateSourceTrigger=LostFocus}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Story year" Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="1" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding StoryYear, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Story day" Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="2" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding StoryDay, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Story hour" Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="3" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding StoryHour, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Story minute" Style="{StaticResource FieldLabel}"/>
+                <TextBox   Grid.Row="4" Grid.Column="1" Style="{StaticResource FieldInput}"
+                           Text="{Binding StoryMinute, UpdateSourceTrigger=LostFocus, TargetNullValue=''}"/>
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" Margin="0,16,0,0"
+                           Foreground="#888"
+                           Text="Sol writes both the header summary and the FELDState 'stats.money' counter. Other fields are passed through to the save header as-is; setting them to unreasonable values may have downstream effects in the game."/>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

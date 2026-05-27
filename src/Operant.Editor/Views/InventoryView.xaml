@@ -1,0 +1,51 @@
+<UserControl x:Class="Operant.Editor.Views.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Operant.Editor.ViewModels">
+    <DockPanel Margin="12">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <TextBox Style="{StaticResource ToolbarText}"
+                     Text="{Binding InventoryFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox Content="Hide equipped items" VerticalAlignment="Center" Margin="16,0,0,0"
+                      IsChecked="{Binding HideEquipped}"/>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding InventoryView}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Entity ID"
+                                    Binding="{Binding EntityId}"
+                                    IsReadOnly="True"
+                                    Width="*"/>
+                <DataGridTextColumn Header="Amount"
+                                    Binding="{Binding Amount, UpdateSourceTrigger=LostFocus}"
+                                    Width="100">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Status" Width="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding StatusLabel}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{x:Static vm:InventoryItemViewModel.StatusOptions}"
+                                      DisplayMemberPath="Label"
+                                      SelectedValuePath="Value"
+                                      SelectedValue="{Binding Status, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Idx"
+                                    Binding="{Binding ArrayIdx}"
+                                    IsReadOnly="True"
+                                    Width="50"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

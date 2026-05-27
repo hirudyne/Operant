@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Operant.SaveFormat</RootNamespace>
+    <AssemblyName>Operant.SaveFormat</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Operant.SaveFormat.Tests" />
+  </ItemGroup>
+</Project>

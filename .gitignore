@@ -1,0 +1,23 @@
+# Build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Publish output
+publish/
+out/
+
+# Tests
+[Tt]est[Rr]esult*/
+
+# Backup files
+*.bak
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Test fixtures contain real save data and are not committed
+src/Operant.SaveFormat.Tests/TestData/*.sav
