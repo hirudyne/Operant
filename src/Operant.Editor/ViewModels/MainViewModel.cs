@@ -190,9 +190,10 @@ public class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Returns the default Zero Parades saves directory if it can be located,
-    /// else null. Path: %LOCALAPPDATA_LOW%\ZA UM\Zero Parades\&lt;user-id&gt;\Saves
-    /// where &lt;user-id&gt; is the most recently modified subdirectory.
+    /// Returns the Zero Parades root folder under %LOCALAPPDATA_LOW% if it
+    /// exists, else null. The actual per-user Saves subdirectory is one or
+    /// two levels deeper; we stop here deliberately so the user picks the
+    /// correct account themselves if multiple are present.
     /// </summary>
     private static string? ResolveDefaultSavesDirectory()
     {
@@ -202,24 +203,7 @@ public class MainViewModel : ViewModelBase
         string localLow = local.Replace(
             @"\Local", @"\LocalLow", StringComparison.OrdinalIgnoreCase);
         string gameRoot = Path.Combine(localLow, "ZA UM", "Zero Parades");
-        if (!Directory.Exists(gameRoot)) return null;
-
-        // Pick the most recently modified user-id subdirectory.
-        DirectoryInfo? bestUser = null;
-        try
-        {
-            foreach (var dir in new DirectoryInfo(gameRoot).EnumerateDirectories())
-            {
-                if (bestUser is null || dir.LastWriteTimeUtc > bestUser.LastWriteTimeUtc)
-                    bestUser = dir;
-            }
-        }
-        catch (IOException) { return null; }
-        catch (UnauthorizedAccessException) { return null; }
-        if (bestUser is null) return null;
-
-        string saves = Path.Combine(bestUser.FullName, "Saves");
-        return Directory.Exists(saves) ? saves : bestUser.FullName;
+        return Directory.Exists(gameRoot) ? gameRoot : null;
     }
 
     public void LoadSave(string path)
