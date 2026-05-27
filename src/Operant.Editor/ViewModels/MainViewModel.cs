@@ -164,10 +164,62 @@ public class MainViewModel : ViewModelBase
         {
             Title = "Open save file",
             Filter = "Zero Parades save (*.sav)|*.sav|All files (*.*)|*.*",
+            InitialDirectory = ResolveInitialDirectory(),
         };
         if (dlg.ShowDialog() != true) return;
 
         LoadSave(dlg.FileName);
+    }
+
+    /// <summary>
+    /// Picks the most sensible directory for the open/save dialogs:
+    /// 1. The directory of the currently-loaded file, if any;
+    /// 2. The Zero Parades saves folder under %LOCALAPPDATA_LOW%, choosing the
+    ///    most recently modified per-user subdirectory if multiple exist;
+    /// 3. Empty string (let Windows pick).
+    /// </summary>
+    private string ResolveInitialDirectory()
+    {
+        if (_currentPath is not null)
+        {
+            var dir = Path.GetDirectoryName(_currentPath);
+            if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                return dir;
+        }
+        return ResolveDefaultSavesDirectory() ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Returns the default Zero Parades saves directory if it can be located,
+    /// else null. Path: %LOCALAPPDATA_LOW%\ZA UM\Zero Parades\&lt;user-id&gt;\Saves
+    /// where &lt;user-id&gt; is the most recently modified subdirectory.
+    /// </summary>
+    private static string? ResolveDefaultSavesDirectory()
+    {
+        // There is no SpecialFolder for LocalLow; derive from LocalApplicationData.
+        string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        if (string.IsNullOrEmpty(local)) return null;
+        string localLow = local.Replace(
+            @"\Local", @"\LocalLow", StringComparison.OrdinalIgnoreCase);
+        string gameRoot = Path.Combine(localLow, "ZA UM", "Zero Parades");
+        if (!Directory.Exists(gameRoot)) return null;
+
+        // Pick the most recently modified user-id subdirectory.
+        DirectoryInfo? bestUser = null;
+        try
+        {
+            foreach (var dir in new DirectoryInfo(gameRoot).EnumerateDirectories())
+            {
+                if (bestUser is null || dir.LastWriteTimeUtc > bestUser.LastWriteTimeUtc)
+                    bestUser = dir;
+            }
+        }
+        catch (IOException) { return null; }
+        catch (UnauthorizedAccessException) { return null; }
+        if (bestUser is null) return null;
+
+        string saves = Path.Combine(bestUser.FullName, "Saves");
+        return Directory.Exists(saves) ? saves : bestUser.FullName;
     }
 
     public void LoadSave(string path)
@@ -221,6 +273,7 @@ public class MainViewModel : ViewModelBase
             Filter = "Zero Parades save (*.sav)|*.sav",
             DefaultExt = ".sav",
             FileName = _currentPath is null ? "save.sav" : Path.GetFileName(_currentPath),
+            InitialDirectory = ResolveInitialDirectory(),
         };
         if (dlg.ShowDialog() != true) return;
         WriteWithBackup(dlg.FileName);
