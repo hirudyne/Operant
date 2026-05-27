@@ -12,6 +12,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="Save metadata" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
@@ -72,6 +74,37 @@
                 <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" Margin="0,16,0,0"
                            Foreground="#888"
                            Text="Sol writes both the header summary and the FELDState 'stats.money' counter. Other fields are passed through to the save header as-is; setting them to unreasonable values may have downstream effects in the game."/>
+            </Grid>
+
+            <TextBlock Grid.Row="4" Text="Character creation" FontSize="16" FontWeight="SemiBold" Margin="0,16,0,8"/>
+            <Grid Grid.Row="5" DataContext="{Binding CharacterCreation}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Demoted skill" Style="{StaticResource FieldLabel}"/>
+                <ComboBox  Grid.Row="0" Grid.Column="1" Margin="0,2"
+                           ItemsSource="{Binding SkillChoices}"
+                           DisplayMemberPath="Label"
+                           SelectedValuePath="Value"
+                           SelectedValue="{Binding DemotedSkill, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Null}}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Promoted skill" Style="{StaticResource FieldLabel}"/>
+                <ComboBox  Grid.Row="1" Grid.Column="1" Margin="0,2"
+                           ItemsSource="{Binding SkillChoices}"
+                           DisplayMemberPath="Label"
+                           SelectedValuePath="Value"
+                           SelectedValue="{Binding PromotedSkill, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Null}}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" Margin="0,16,0,0"
+                           Foreground="#888"
+                           Text="Demotion forces the chosen skill's effective rating to 0 (subtracted from the faculty's max threshold). Promotion grants +1 to the chosen skill. Set either to (none) to remove the effect entirely - the skill's stored value then applies as-is."/>
             </Grid>
         </Grid>
     </ScrollViewer>

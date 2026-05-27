@@ -59,6 +59,14 @@ public class MainViewModel : ViewModelBase
     public bool HasSave => _save is not null;
     public bool IsDirty => _isDirty;
 
+    private CharacterCreationViewModel? _characterCreation;
+    /// <summary>Set after a save is loaded. The Overview tab binds to this.</summary>
+    public CharacterCreationViewModel? CharacterCreation
+    {
+        get => _characterCreation;
+        private set => SetField(ref _characterCreation, value);
+    }
+
     public string Title
     {
         get
@@ -215,6 +223,7 @@ public class MainViewModel : ViewModelBase
             _currentPath = path;
             _isDirty = false;
             OnPropertyChanged(nameof(IsDirty));
+            CharacterCreation = new CharacterCreationViewModel(loaded, MarkDirty);
             RebuildCollections();
             RaiseAllForLoadedSave();
             Status = $"Loaded {Path.GetFileName(path)}.";

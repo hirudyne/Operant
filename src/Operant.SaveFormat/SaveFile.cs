@@ -41,6 +41,10 @@ public class SaveFile
     {
         WriteIndented = false,
         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        // Required since .NET 8: without a type-info resolver, JsonNode trees
+        // containing JsonValueCustomized<T> nodes (the kind produced by
+        // JsonArray.Add(int) etc.) will throw on serialisation.
+        TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver(),
     };
 
     private SaveFile(JsonObject header, JsonObject content, bool encryptionRequired)
@@ -194,6 +198,67 @@ public class SaveFile
                 inv["Items"] = arr;
             }
             return arr;
+        }
+    }
+
+    /// <summary>
+    /// The skill id (e.g. "coordination") currently flagged as demoted via
+    /// <c>skills.demotion_&lt;id&gt;</c>, or null if no skill is demoted.
+    /// Setting this clears any existing demotion flag and applies a new one;
+    /// set to null to fully clear the demotion (the skill's stored base value
+    /// will then take effect normally).
+    /// </summary>
+    public string? DemotedSkill
+    {
+        get => FindFlaggedSkill(SkillMetadata.DemotionPrefix);
+        set => SetExclusiveSkillFlag(SkillMetadata.DemotionPrefix, value);
+    }
+
+    /// <summary>
+    /// The skill id currently flagged as promoted via
+    /// <c>skills.promotion_&lt;id&gt;</c>, or null if none.
+    /// </summary>
+    public string? PromotedSkill
+    {
+        get => FindFlaggedSkill(SkillMetadata.PromotionPrefix);
+        set => SetExclusiveSkillFlag(SkillMetadata.PromotionPrefix, value);
+    }
+
+    private string? FindFlaggedSkill(string prefix)
+    {
+        foreach (var (key, value) in EnumerateCounters())
+        {
+            if (value == 1 && key.StartsWith(prefix, StringComparison.Ordinal))
+                return key[prefix.Length..];
+        }
+        return null;
+    }
+
+    private void SetExclusiveSkillFlag(string prefix, string? newSkillId)
+    {
+        // Clear every existing flag with this prefix, then optionally set the new one.
+        // We mutate the parallel arrays directly to remove (rather than just zeroing)
+        // because the game's RtAttribute layer treats absent vs zero differently for
+        // certain conditional gates - safer to keep the dictionary clean.
+        var counters = FeldState["m_countersValues"] as System.Text.Json.Nodes.JsonObject;
+        if (counters?["m_keys"] is not System.Text.Json.Nodes.JsonArray keys ||
+            counters["m_values"] is not System.Text.Json.Nodes.JsonArray vals)
+        {
+            return;
+        }
+        for (int i = keys.Count - 1; i >= 0; i--)
+        {
+            string? k = (string?)keys[i];
+            if (k is not null && k.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                keys.RemoveAt(i);
+                vals.RemoveAt(i);
+            }
+        }
+        if (newSkillId is not null)
+        {
+            keys.Add(prefix + newSkillId);
+            vals.Add(1);
         }
     }
 
