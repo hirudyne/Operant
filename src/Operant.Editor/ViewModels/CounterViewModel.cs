@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Operant.SaveFormat;
 
 namespace Operant.Editor.ViewModels;
 
@@ -23,6 +24,34 @@ public class CounterViewModel : ViewModelBase
     }
 
     public string Key => (string?)_keys[_index] ?? string.Empty;
+
+    /// <summary>
+    /// User-facing label. For skill counters, looks up the display name from
+    /// <see cref="SkillMetadata"/>; for demotion/promotion flags, shows the
+    /// underlying skill's display name with a prefix; otherwise returns the
+    /// raw key unchanged.
+    /// </summary>
+    public string DisplayKey
+    {
+        get
+        {
+            const string skillsPrefix = "skills.";
+            if (!Key.StartsWith(skillsPrefix, StringComparison.Ordinal)) return Key;
+            string remainder = Key[skillsPrefix.Length..];
+
+            if (remainder.StartsWith("demotion_", StringComparison.Ordinal))
+                return "Demoted: " + SkillMetadata.DisplayNameFor(remainder["demotion_".Length..]);
+            if (remainder.StartsWith("promotion_", StringComparison.Ordinal))
+                return "Promoted: " + SkillMetadata.DisplayNameFor(remainder["promotion_".Length..]);
+            if (remainder.StartsWith("max_rating_", StringComparison.Ordinal))
+                return SkillMetadata.DisplayNameFor(remainder["max_rating_".Length..]) + " (max rating)";
+            if (remainder.StartsWith("penalty_", StringComparison.Ordinal))
+                return SkillMetadata.DisplayNameFor(remainder["penalty_".Length..]) + " (penalty)";
+
+            var skill = SkillMetadata.FromSaveId(remainder);
+            return skill is not null ? skill.DisplayName : Key;
+        }
+    }
 
     public string Group
     {

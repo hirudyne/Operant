@@ -28,7 +28,7 @@
             </DataGrid.GroupStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Counter"
-                                    Binding="{Binding Key}"
+                                    Binding="{Binding DisplayKey}"
                                     IsReadOnly="True"
                                     Width="*"/>
                 <DataGridTextColumn Header="Value"

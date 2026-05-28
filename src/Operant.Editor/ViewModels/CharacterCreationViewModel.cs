@@ -21,7 +21,10 @@ public class CharacterCreationViewModel : ViewModelBase
     /// <summary>"(none)" sentinel plus the canonical skill ids, in the order the UI displays them.</summary>
     public IReadOnlyList<SkillChoice> SkillChoices { get; } =
         new[] { new SkillChoice(null, "(none)") }
-        .Concat(SkillMetadata.SkillIds.Select(id => new SkillChoice(id, id)))
+        .Concat(SkillMetadata.Skills
+            .OrderBy(s => s.Faculty)
+            .ThenBy(s => s.DisplayName)
+            .Select(s => new SkillChoice(s.SaveId, $"{s.DisplayName} ({s.Faculty})")))
         .ToArray();
 
     public string? DemotedSkill

@@ -65,3 +65,40 @@ public class SkillFlagTests
         Assert.DoesNotContain("foo",    SkillMetadata.SkillIds);
     }
 }
+
+public class SkillMetadataMappingTests
+{
+    [Fact]
+    public void Mapping_HasFifteenSkills_FiveInEachFaculty()
+    {
+        Assert.Equal(15, SkillMetadata.Skills.Count);
+        var grouped = SkillMetadata.Skills
+            .GroupBy(s => s.Faculty)
+            .Select(g => (g.Key, g.Count()))
+            .OrderBy(t => t.Key)
+            .ToList();
+        Assert.Equal(new[] {
+            (SkillMetadata.Faculty.Action,    5),
+            (SkillMetadata.Faculty.Relations, 5),
+            (SkillMetadata.Faculty.Intellect, 5),
+        }, grouped.OrderBy(t => t.Item1).ToArray());
+    }
+
+    [Theory]
+    [InlineData("presence",     "Shadowplay")]
+    [InlineData("awareness",    "Statehood")]
+    [InlineData("muscle",       "Instincts")]
+    [InlineData("vigour",       "Doppelg\u00e4ng")]
+    [InlineData("coordination", "Coordination")]
+    [InlineData("nerve",        "Nerve")]
+    public void DisplayNameFor_KnownInternal_ReturnsDisplayLabel(string saveId, string expected)
+    {
+        Assert.Equal(expected, SkillMetadata.DisplayNameFor(saveId));
+    }
+
+    [Fact]
+    public void DisplayNameFor_Unknown_ReturnsInputUnchanged()
+    {
+        Assert.Equal("nothing_here", SkillMetadata.DisplayNameFor("nothing_here"));
+    }
+}
